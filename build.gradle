@@ -50,6 +50,9 @@ dependencies {
  
     //添加MySQL连接驱动的依赖
     compile('mysql:mysql-connector-java:6.0.5')
+    
+    //添加Apache Commons Lang依赖
+    compile('org.apache.commons:commons-lang3:3.5')
 
     //添加H2的依赖
     runtime('com.h2database:h2:1.4.193')
