@@ -1,11 +1,21 @@
 package com.lyh.springbootblog.controller;
 
 import com.lyh.springbootblog.domain.User;
-import com.lyh.springbootblog.repository.UserRepository;
+import com.lyh.springbootblog.service.UserService;
+
+import com.lyh.springbootblog.util.ConstraintViolationExceptionHandler;
+import com.lyh.springbootblog.vo.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.ConstraintViolationException;
+import java.util.List;
 
 
 /**
@@ -17,46 +27,48 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @RestController
 @RequestMapping("/users")
+//@PreAuthorize("hasAuthority('ROLE_ADMIN')")  // 指定角色权限才能操作方法
 public class UserController {
+
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     /**
      * 查询所有用户
+     * @param async
+     * @param pageIndex
+     * @param pageSize
+     * @param name
      * @param model
      * @return
      */
     @GetMapping
-    public ModelAndView list(Model model) {
-        model.addAttribute("userList", userRepository.findAll());
-        model.addAttribute("title", "用户管理");
-        return new ModelAndView("users/list", "userModel", model);
+    public ModelAndView list(@RequestParam(value="async",required=false) boolean async,
+                             @RequestParam(value="pageIndex",required=false,defaultValue="0") int pageIndex,
+                             @RequestParam(value="pageSize",required=false,defaultValue="10") int pageSize,
+                             @RequestParam(value="name",required=false,defaultValue="") String name,
+                             Model model) {
+
+        Pageable pageable = new PageRequest(pageIndex, pageSize);
+        Page<User> page = userService.listUsersByNameLike(name, pageable);
+        List<User> list = page.getContent();	// 当前所在页面数据列表
+
+        model.addAttribute("page", page);
+        model.addAttribute("userList", list);
+        return new ModelAndView(async==true?"users/list :: #mainContainerRepleace":"users/list", "userModel", model);
     }
 
-    /**
-     * 根据id 查询用户
-     * @param id
-     * @param model
-     * @return
-     */
-    @GetMapping("{id}")
-    public ModelAndView view(@PathVariable("id") Long id, Model model) {
-        User user = userRepository.findById(id).orElse(null); //springboot2.0改版后取消了findOne方法
-        model.addAttribute("user", user);
-        model.addAttribute("title", "查看用户");
-        return new ModelAndView("users/view", "userModel", model);
-    }
 
     /**
      * 获取创建表单页面
      * @param model
      * @return
      */
-    @GetMapping("/form")
+    @GetMapping("/add")
     public ModelAndView creatForm(Model model) {
         model.addAttribute("user", new User(null, null, null, null));
         model.addAttribute("title", "创建用户");
-        return new ModelAndView("users/form", "userModel", model);
+        return new ModelAndView("users/add", "userModel", model);
     }
 
     /**
@@ -65,20 +77,36 @@ public class UserController {
      * @return
      */
     @PostMapping
-    public ModelAndView saveOrUpdataUser(User user) {
-        userRepository.save(user);
-        return new ModelAndView("redirect:/users");//重定向到list页面
+//    public ModelAndView saveOrUpdateUser(User user) {
+//        userService.saveOrUpdateUser(user);
+//        return new ModelAndView("redirect:users/list");//重定向到list页面
+//    }
+    public ResponseEntity<Response> saveOrUpdateUser(User user) {
+
+//        List<Authority> authorities=new ArrayList<Authority>();
+//        authorities.add(authorityService.getAuthorityById(authorityId));
+//        user.setAuthorities(authorities);
+
+        try {
+            userService.saveOrUpdateUser(user);
+        }
+        catch(ConstraintViolationException e) {
+            return ResponseEntity.ok().body(new Response(false	, ConstraintViolationExceptionHandler.getMessage(e)));
+        }
+        return ResponseEntity.ok().body(new Response(true, "处理成功",user));
     }
+
 
     /**
      * 删除用户
      * @param id
      * @return
      */
-    @GetMapping("/delete/{id}")
-    public ModelAndView delete(@PathVariable("id") Long id) {
-        userRepository.deleteById(id);
-        return new ModelAndView("redirect:/users");
+    @DeleteMapping("/{id}")
+    public Response delete(@PathVariable("id") Long id) {
+        userService.removeUser(id);
+//        return new ModelAndView("redirect:/users");
+        return new Response(true, "删除成功");
     }
 
     /**
@@ -87,13 +115,13 @@ public class UserController {
      * @param model
      * @return
      */
-    @GetMapping("/modify/{id}")
+    @GetMapping("/edit/{id}")
     public  ModelAndView modify(@PathVariable("id") Long id, Model model) {
-        User user = userRepository.findById(id).get();
+        User user = userService.getUserById(id);
 
         model.addAttribute("user",user);
         model.addAttribute("title","修改用户");
-        return  new ModelAndView("users/form", "userModel", model);
+        return  new ModelAndView("users/edit", "userModel", model);
     }
 
 }
