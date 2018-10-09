@@ -1,6 +1,8 @@
 package com.lyh.springbootblog.controller;
 
+import com.lyh.springbootblog.domain.Authority;
 import com.lyh.springbootblog.domain.User;
+import com.lyh.springbootblog.service.AuthorityService;
 import com.lyh.springbootblog.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,8 +25,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class MainController {
 
+    private static final Long ROLE_USER_AUTHORITY_ID = 2L;
+
     @Autowired
     UserService userService;
+
+    @Autowired
+    private AuthorityService authorityService;
+
     /**
      * 根跳转
      * @return
@@ -77,9 +88,10 @@ public class MainController {
      */
     @PostMapping("/register")
     public String registerUser(User user) {
-        /*List<Authority> authorities = new ArrayList<>();
+        List<Authority> authorities = new ArrayList<>();
         authorities.add(authorityService.getAuthorityById(ROLE_USER_AUTHORITY_ID));
-        user.setAuthorities(authorities);*/
+        user.setAuthorities(authorities);
+
         userService.saveOrUpdateUser(user);
         return "redirect:/login";
     }

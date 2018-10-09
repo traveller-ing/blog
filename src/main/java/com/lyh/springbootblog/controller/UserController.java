@@ -1,6 +1,8 @@
 package com.lyh.springbootblog.controller;
 
+import com.lyh.springbootblog.domain.Authority;
 import com.lyh.springbootblog.domain.User;
+import com.lyh.springbootblog.service.AuthorityService;
 import com.lyh.springbootblog.service.UserService;
 
 import com.lyh.springbootblog.util.ConstraintViolationExceptionHandler;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,6 +35,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AuthorityService authorityService;
 
     /**
      * 查询所有用户
@@ -74,18 +80,15 @@ public class UserController {
     /**
      * 保存或修改用户
      * @param user
+     * @param authorityId
      * @return
      */
     @PostMapping
-//    public ModelAndView saveOrUpdateUser(User user) {
-//        userService.saveOrUpdateUser(user);
-//        return new ModelAndView("redirect:users/list");//重定向到list页面
-//    }
-    public ResponseEntity<Response> saveOrUpdateUser(User user) {
+    public ResponseEntity<Response> saveOrUpdateUser(User user, Long authorityId) {
 
-//        List<Authority> authorities=new ArrayList<Authority>();
-//        authorities.add(authorityService.getAuthorityById(authorityId));
-//        user.setAuthorities(authorities);
+        List<Authority> authorities=new ArrayList<>();
+        authorities.add(authorityService.getAuthorityById(authorityId));
+        user.setAuthorities(authorities);
 
         try {
             userService.saveOrUpdateUser(user);
