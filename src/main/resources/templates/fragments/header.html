@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
       th:fragment="header">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSRF -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <!-- Tether core CSS -->
     <link href="../../css/tether.min.css" th:href="@{/css/tether.min.css}" rel="stylesheet">
@@ -68,8 +74,23 @@
 
             </ul>
 
-            <a href="/login" class="btn btn-outline-success my-2 my-sm-0" type="submit">登录</a>
-            <a href="/register" class="btn btn-outline-success my-2 my-sm-0" type="submit">注册</a>
+            <div sec:authorize="isAuthenticated()"  class="row" >
+                <div class="dropdown">
+                    <a class=" dropdown-toggle" href="/u/lyh" th:href="@{'/u/' + ${#authentication.name}}" data-toggle="dropdown"><span sec:authentication="name"></span></a>
+                    <div class="dropdown-menu" >
+                        <a class=" dropdown-item" href="/u/lyh" th:href="@{'/u/' + ${#authentication.name}}">个人主页</a>
+                        <a class="dropdown-item" href="/u/lyh/profile" th:href="@{'/u/' + ${#authentication.name}} + '/profile'" >个人设置</a>
+                    </div>
+                </div>
+                <form action="/logout" th:action="@{/logout}" method="post">
+                    <input class="btn btn-outline-success " type="submit" value="退出">
+                </form>
+            </div>
+
+            <div  sec:authorize="isAnonymous()">
+                <a href="/login" class="btn btn-outline-success my-2 my-sm-0" type="submit">登录</a>
+                <a href="/register" class="btn btn-outline-success my-2 my-sm-0" type="submit">注册</a>
+            </div>
 
         </div>
     </div>

@@ -6,10 +6,12 @@ import com.lyh.springbootblog.service.AuthorityService;
 import com.lyh.springbootblog.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,9 @@ public class MainController {
 
     @Autowired
     private AuthorityService authorityService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * 根跳转
@@ -66,10 +71,10 @@ public class MainController {
      * @return
      */
     @GetMapping("/login-error")
-    public String loginError(Model model){
+    public ModelAndView loginError(Model model){
         model.addAttribute("loginError", true);
         model.addAttribute("errorMsg", "登录失败,用户名或者密码错误");
-        return "login";
+        return new ModelAndView("login","userModel",model);
     }
 
     /**
@@ -92,7 +97,8 @@ public class MainController {
         authorities.add(authorityService.getAuthorityById(ROLE_USER_AUTHORITY_ID));
         user.setAuthorities(authorities);
 
-        userService.saveOrUpdateUser(user);
+        userService.saveOrUpdateUser(new User(user.getId(), user.getName(), user.getUsername(), user.getEmail(),
+                passwordEncoder.encode(user.getPassword())));
         return "redirect:/login";
     }
 }

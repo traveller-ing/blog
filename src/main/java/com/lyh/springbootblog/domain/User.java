@@ -62,11 +62,12 @@ public class User implements UserDetails {
     protected User() { //无参构造函数；protected防止直接使用
     }
 
-    public User(Long id, String name, String username,String email) {
+    public User(Long id, String name, String username,String email,String password) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.username = username;
+        this.password = password;
     }
 
 

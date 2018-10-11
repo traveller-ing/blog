@@ -3,8 +3,12 @@ package com.lyh.springbootblog.service;
 import com.lyh.springbootblog.domain.User;
 import com.lyh.springbootblog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -17,7 +21,8 @@ import javax.transaction.Transactional;
  * Description: 用户服务接口实现
  */
 @Service
-public class UserServiceImp implements  UserService {
+@Qualifier("userServiceImp")
+public class UserServiceImp implements  UserService, UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -51,5 +56,10 @@ public class UserServiceImp implements  UserService {
         name = "%" + name + "%";
         Page<User> users = userRepository.findByNameLike(name, pageable);
         return users;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username);
     }
 }
