@@ -37,11 +37,13 @@ label.error {
 					<div class="col-md-12" style="border: 1px solid #ccc;">
 						<span> <a class="blog-edit-avatar" data-toggle="modal"
 							data-target="#flipFlop" role="button"
-							data-th-attr="userName=${userModel.user.username}"> <img
+							data-th-attr="userName=${userModel.user.username}">
+							<img
 								th:src="${userModel.user.avatar} == null ? '/images/avatar-defualt.jpg' : ${userModel.user.avatar}"
-								class="blog-avatar blog-avatar-230">
+								class="blog-avatar blog-avatar-230"/>
 
-						</a> <span style="padding-left: 25px; color: red; font-size: 14px">点击头像可以更换默认头像</span>
+						</a>
+							<!--<span style="padding-left: 25px; color: red; font-size: 14px">点击头像可以更换默认头像</span>-->
 
 						</span>
 
@@ -94,8 +96,8 @@ label.error {
 							</div>
 							<div class="form-group">
 								<button type="submit" class="btn btn-primary" id="saveProfile">保存</button>
-								<span th:text="${userModel.saveProfileTip}" id="saveProfileTip"
-									hidden="true">sdsd</span>
+								<!--<span th:text="${userModel.saveProfileTip}" id="saveProfileTip"-->
+									<!--hidden="true">sdsd</span>-->
 							</div>
 						</form>
 

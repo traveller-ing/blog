@@ -3,6 +3,8 @@ package com.lyh.springbootblog.domain;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -52,9 +54,11 @@ public class User implements UserDetails {
     @Column(length = 200)
     private String avatar;  // 头像图片地址
 
-    @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_authority", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
+    @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER) //DETACH级联脱管/游离操作。
+    //如果你要删除一个实体，但是它有外键无法删除，你就需要这个级联权限了。它会撤销所有相关的外键关联。
+    //EAGER表示取出这条数据时，它关联的数据也同时取出放入内存中
+    @JoinTable(name = "user_authority", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), // 关联user表
+            inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id")) // 关联authority表
     private List<Authority> authorities;
 
 
@@ -99,6 +103,9 @@ public class User implements UserDetails {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getPassword() {
         return password;
@@ -106,6 +113,16 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * 加密密码
+     * @param password
+     */
+    public void setEncodePassword(String password) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodePassed = encoder.encode(password);
+        this.password = encodePassed;
     }
 
     public String getAvatar() {
@@ -141,9 +158,6 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -158,4 +172,5 @@ public class User implements UserDetails {
     public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
     }
+
 }

@@ -16,6 +16,9 @@ spring:
       ddl-auto: create-drop
     database: mysql
 
+file:
+  server:
+    url: http://localhost:8081/upload
 #使用H2控制台
 #spring.h2.console.enabled=true
 #H2连接配置

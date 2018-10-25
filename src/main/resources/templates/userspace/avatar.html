@@ -47,8 +47,8 @@
  
     </div>
 </div>
-<form  enctype="multipart/form-data"  id="avatarformid"  >
-</form> 
+<form  enctype="multipart/form-data" id="avatarformid"></form>
+<!--multipart/form-data属性，这种编码方式的表单会以二进制流的方法来处理表单数据。这种编码方式会将文件域指定文件的内容也封装到请求参数里-->
 
 <script>
     var crop = document.querySelector('#cropImg');
@@ -65,7 +65,5 @@
             cropImg.src = dataURL;
         }
     });
-    
-    
 </script>
  
