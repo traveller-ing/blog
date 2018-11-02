@@ -55,7 +55,7 @@ public class UserController {
                              @RequestParam(value="name",required=false,defaultValue="") String name,
                              Model model) {
 
-        Pageable pageable = new PageRequest(pageIndex, pageSize);
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
         Page<User> page = userService.listUsersByNameLike(name, pageable);
         List<User> list = page.getContent();	// 当前所在页面数据列表
 
