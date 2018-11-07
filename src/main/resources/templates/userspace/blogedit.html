@@ -86,7 +86,7 @@
                                            class="form-control form-control-chosen"
                                            data-placeholder="请选择">
                                 <option th:value="*{id}" th:text="*{name}"
-                                        th:each="catalog : ${blogModel.catalogs}"
+                                        <!--th:each="catalog : ${blogModel.catalogs}"-->
                                         th:object="${catalog}"
                                         th:selected="${catalog  eq blogModel.blog.catalog }">Java</option>
                             </select>

@@ -15,7 +15,8 @@ spring:
     hibernate:
       ddl-auto: create-drop
     database: mysql
-
+    #database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    #database-platform: org.hibernate.dialect.MySQLMyISAMDialect
 file:
   server:
     url: http://localhost:8081/upload

@@ -1,14 +1,17 @@
 package com.lyh.springbootblog.service;
 
 import com.lyh.springbootblog.domain.Blog;
+import com.lyh.springbootblog.domain.Comment;
 import com.lyh.springbootblog.domain.User;
 import com.lyh.springbootblog.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -65,5 +68,27 @@ public class BlogServiceImp implements BlogService {
         Blog blog = blogRepository.findById(id).get();
         blog.setReadSize(blog.getReadSize() + 1); // 在原有的阅读量基础上递增1
         blogRepository.save(blog);
+    }
+
+    @Override
+    public Blog createComment(Long blogId, String commentContent) {
+        Blog originalBlog = blogRepository.findById(blogId).get();
+//        if(optionalBlog.isPresent()) {
+//            originalBlog = optionalBlog;
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Comment comment = new Comment(user, commentContent);
+            originalBlog.addComment(comment);
+//        }
+        return this.saveBlog(originalBlog);
+    }
+
+    @Override
+    public void removeComment(Long blogId, Long commentId) {
+        Blog originalBlog = blogRepository.findById(blogId).get();
+//        if(optionalBlog.isPresent()) {
+//            Blog originalBlog = optionalBlog.get();
+            originalBlog.removeComment(commentId);
+            this.saveBlog(originalBlog);
+//        }
     }
 }

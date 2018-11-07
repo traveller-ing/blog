@@ -240,7 +240,7 @@ public class UserspaceController {
         User user = (User)userDetailsService.loadUserByUsername(username);
 
         model.addAttribute("blog", new Blog(null, null, null));
-        model.addAttribute("fileServer",fileServerUrl);//文件服务器地址返回给客户端
+        model.addAttribute("fileServerUrl",fileServerUrl);//文件服务器地址返回给客户端
         return new ModelAndView("/userspace/blogedit", "blogModel", model);
     }
 
@@ -255,7 +255,7 @@ public class UserspaceController {
         User user = (User)userDetailsService.loadUserByUsername(username);
 
         model.addAttribute("blog", blogService.getBlogById(id));
-        model.addAttribute("fileServer",fileServerUrl);//文件服务器地址返回给客户端
+        model.addAttribute("fileServerUrl",fileServerUrl);//文件服务器地址返回给客户端
         return new ModelAndView("/userspace/blogedit", "blogModel", model);
     }
 
