@@ -2,6 +2,7 @@ package com.lyh.springbootblog.controller;
 
 import com.lyh.springbootblog.domain.Blog;
 import com.lyh.springbootblog.domain.User;
+import com.lyh.springbootblog.domain.Vote;
 import com.lyh.springbootblog.service.BlogService;
 import com.lyh.springbootblog.service.UserService;
 import com.lyh.springbootblog.util.ConstraintViolationExceptionHandler;
@@ -223,6 +224,20 @@ public class UserspaceController {
             }
         }
 
+        // 判断操作用户的点赞情况
+        List<Vote> votes = blog.getVotes();
+        Vote currentVote = null; // 当前用户的点赞情况
+
+        if (principal !=null) {
+            for (Vote vote : votes) {
+                if (vote.getUser().getUsername().equals(principal.getUsername())) {
+                    currentVote = vote;
+                    break;
+                }
+            }
+        }
+
+        model.addAttribute("currentVote",currentVote);
         model.addAttribute("isBlogOwner", isBlogOwner);
         model.addAttribute("blogModel",blog);
 

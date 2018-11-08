@@ -3,6 +3,7 @@ package com.lyh.springbootblog.service;
 import com.lyh.springbootblog.domain.Blog;
 import com.lyh.springbootblog.domain.Comment;
 import com.lyh.springbootblog.domain.User;
+import com.lyh.springbootblog.domain.Vote;
 import com.lyh.springbootblog.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -89,6 +90,36 @@ public class BlogServiceImp implements BlogService {
 //            Blog originalBlog = optionalBlog.get();
             originalBlog.removeComment(commentId);
             this.saveBlog(originalBlog);
+//        }
+    }
+
+    @Override
+    public Blog createVote(Long blogId) {
+        Blog optionalBlog = blogRepository.findById(blogId).get();
+//        Blog originalBlog = null;
+//
+//        if (optionalBlog.isPresent()) {
+//            originalBlog = optionalBlog.get();
+
+            User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Vote vote = new Vote(user);
+            boolean isExist = optionalBlog.addVote(vote);
+            if (isExist) {
+                throw new IllegalArgumentException("该用户已经点过赞了");
+            }
+//        }
+        return this.saveBlog(optionalBlog);
+    }
+
+    @Override
+    public void removeVote(Long blogId, Long voteId) {
+        Blog optionalBlog = blogRepository.findById(blogId).get();
+//        Blog originalBlog = null;
+
+//        if (optionalBlog.isPresent()) {
+//            originalBlog = optionalBlog.get();
+            optionalBlog.removeVote(voteId);
+            this.saveBlog(optionalBlog);
 //        }
     }
 }

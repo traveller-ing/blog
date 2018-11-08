@@ -15,7 +15,7 @@ spring:
     hibernate:
       ddl-auto: create-drop
     database: mysql
-    #database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     #database-platform: org.hibernate.dialect.MySQLMyISAMDialect
 file:
   server:
