@@ -52,9 +52,11 @@
 
 
                     <h5>
-                        分类：<a href="/u/waylau/blogs?category=11">
-                        Spring Data
-                    </a>
+                        分类：
+                        <a th:href="'/u/'+${blogModel.user.username} + '/blogs?catalog='+${blogModel.catalog.id} "
+                           th:text="${blogModel.catalog.name}">
+                            Spring Boot
+                        </a>
                     </h5>
 
                     <h5>标签：

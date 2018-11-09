@@ -1,6 +1,7 @@
 package com.lyh.springbootblog.repository;
 
 import com.lyh.springbootblog.domain.Blog;
+import com.lyh.springbootblog.domain.Catalog;
 import com.lyh.springbootblog.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,14 +25,23 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
      */
     Page<Blog> findByUserAndTitleLike(User user, String title, Pageable pageable);
 
-
     /**
      * 根据用户名、博客标题查询博客列表（时间逆序）
-     * @param user
      * @param title
+     * @param user
+     * @param tags
+     * @param user2
      * @param pageable
      * @return
      */
     Page<Blog> findByTitleLikeAndUserOrTagsLikeAndUserOrderByCreateTimeDesc(String title, User user, String tags, User user2, Pageable pageable);
+
+    /**
+     * 根据分类查询博客列表
+     * @param catalog
+     * @param pageable
+     * @return
+     */
+    Page<Blog> findByCatalog(Catalog catalog, Pageable pageable);
 
 }

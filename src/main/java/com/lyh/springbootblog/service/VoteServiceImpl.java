@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  * Description:
  */
 @Service
-public class VoteServiceImp implements VoteService {
+public class VoteServiceImpl implements VoteService {
 
     @Autowired
     private VoteRepository voteRepository;

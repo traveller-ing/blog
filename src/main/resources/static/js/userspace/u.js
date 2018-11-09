@@ -11,6 +11,7 @@
 $(function() {
 
     var _pageSize; // 存储用于搜索
+    var catalogId;
 
     // 根据用户名、页面索引、页面大小获取用户列表
     function getBlogsByName(pageIndex, pageSize) {
@@ -21,7 +22,7 @@ $(function() {
                 "async":true,
                 "pageIndex":pageIndex,
                 "pageSize":pageSize,
-                "catalog": catalogId,
+                "catalogId": catalogId,
                 "keyword":$("#keyword").val()
             },
             success: function(data){
@@ -73,13 +74,10 @@ $(function() {
         $("#keyword").val('');
     });
 
-    var catalogId;
 
     // 获取分类列表
     function getCatalogs(username) {
-        // 获取 CSRF Token
-
-/*        $.ajax({
+        $.ajax({
             url: '/catalogs',
             type: 'GET',
             data:{"username":username},
@@ -89,7 +87,7 @@ $(function() {
             error : function() {
                 toastr.error("error!");
             }
-        });*/
+        });
     }
 
     // 获取编辑分类的页面
@@ -140,8 +138,7 @@ $(function() {
                 }
             }),
             beforeSend : function(request) {
-                request.setRequestHeader(csrfHeader, csrfToken); // 添加 CSRF
-                // Token
+                request.setRequestHeader(csrfHeader, csrfToken); // 添加 CSRF Token
             },
             success : function(data) {
                 if (data.success) {

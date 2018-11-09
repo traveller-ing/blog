@@ -1,9 +1,11 @@
 package com.lyh.springbootblog.controller;
 
 import com.lyh.springbootblog.domain.Blog;
+import com.lyh.springbootblog.domain.Catalog;
 import com.lyh.springbootblog.domain.User;
 import com.lyh.springbootblog.domain.Vote;
 import com.lyh.springbootblog.service.BlogService;
+import com.lyh.springbootblog.service.CatalogService;
 import com.lyh.springbootblog.service.UserService;
 import com.lyh.springbootblog.util.ConstraintViolationExceptionHandler;
 import com.lyh.springbootblog.vo.Response;
@@ -44,11 +46,14 @@ public class UserspaceController {
     private UserService userService;
 
     @Autowired
-    @Qualifier("userServiceImp")
+    @Qualifier("userServiceImpl")
     private UserDetailsService userDetailsService;
 
     @Autowired
     private BlogService blogService;
+
+    @Autowired
+    private CatalogService catalogService;
 
     @Value("${file.server.url}")
     private String fileServerUrl;
@@ -165,14 +170,13 @@ public class UserspaceController {
 
         Page<Blog> page = null;
 
-        if (catalogId != null) {  //分类查询
-            System.out.print("category:" + catalogId );
-            System.out.print("selflink:" + "redirect:/u/"+ username +"/blogs?category=" + catalogId);
-            return "/u";
+        if (catalogId != null && catalogId > 0) { // 分类查询
+             Catalog catalog = catalogService.getCatalogById(catalogId);
+             Pageable pageable = PageRequest.of(pageIndex, pageSize);
+             page = blogService.listBlogsByCatalog(catalog, pageable);
+             order = "";
         }
-
-
-        if (order.equals("hot")) { // 最热查询
+        else if (order.equals("hot")) { // 最热查询
             Sort sort = new Sort(Sort.Direction.DESC,"readSize", "commentSize", "voteSize");
             Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
             page = blogService.listBlogsByTitleVoteAndSort(user, keyword, pageable);
@@ -253,7 +257,9 @@ public class UserspaceController {
     public ModelAndView createBlog(@PathVariable("username") String username, Model model) {
         // 获取用户分类列表
         User user = (User)userDetailsService.loadUserByUsername(username);
+        List<Catalog> catalogs = catalogService.listCatalogs(user);
 
+        model.addAttribute("catalogs", catalogs);
         model.addAttribute("blog", new Blog(null, null, null));
         model.addAttribute("fileServerUrl",fileServerUrl);//文件服务器地址返回给客户端
         return new ModelAndView("/userspace/blogedit", "blogModel", model);
@@ -268,7 +274,9 @@ public class UserspaceController {
     public ModelAndView editBlog(@PathVariable("username") String username, @PathVariable("id") Long id, Model model) {
         // 获取用户分类列表
         User user = (User)userDetailsService.loadUserByUsername(username);
+        List<Catalog> catalogs = catalogService.listCatalogs(user);
 
+        model.addAttribute("catalogs", catalogs);
         model.addAttribute("blog", blogService.getBlogById(id));
         model.addAttribute("fileServerUrl",fileServerUrl);//文件服务器地址返回给客户端
         return new ModelAndView("/userspace/blogedit", "blogModel", model);
@@ -283,6 +291,10 @@ public class UserspaceController {
     @PostMapping("/{username}/blogs/edit")
     @PreAuthorize("authentication.name.equals(#username)")
     public ResponseEntity<Response> saveBlog(@PathVariable("username") String username, @RequestBody Blog blog) {
+        // 对 Catalog 进行判空处理
+        if (blog.getCatalog().getId() == null) {
+            return ResponseEntity.ok().body(new Response(false,"未选择分类"));
+        }
 
         try {
             // 判断是修改还是新增

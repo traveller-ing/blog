@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  * Description: Comment Service接口实现
  */
 @Service
-public class CommentServiceImp implements CommentService {
+public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private CommentRepository commentRepository;

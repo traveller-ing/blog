@@ -1,9 +1,6 @@
 package com.lyh.springbootblog.service;
 
-import com.lyh.springbootblog.domain.Blog;
-import com.lyh.springbootblog.domain.Comment;
-import com.lyh.springbootblog.domain.User;
-import com.lyh.springbootblog.domain.Vote;
+import com.lyh.springbootblog.domain.*;
 import com.lyh.springbootblog.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,7 +19,7 @@ import java.util.Optional;
  * Description:Blog服务
  */
 @Service
-public class BlogServiceImp implements BlogService {
+public class BlogServiceImpl implements BlogService {
 
     @Autowired
     private BlogRepository blogRepository;
@@ -121,5 +118,11 @@ public class BlogServiceImp implements BlogService {
             optionalBlog.removeVote(voteId);
             this.saveBlog(optionalBlog);
 //        }
+    }
+
+    @Override
+    public Page<Blog> listBlogsByCatalog(Catalog catalog, Pageable pageable) {
+        Page<Blog> blogs = blogRepository.findByCatalog(catalog, pageable);
+        return blogs;
     }
 }
