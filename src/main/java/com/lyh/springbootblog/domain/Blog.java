@@ -67,7 +67,7 @@ public class Blog implements Serializable {
     private Integer voteSize = 0;  // 点赞量
 
     @Column(name="tags", length = 100)
-    private String tags;  // 标签
+    private String tags;  // 标签“a,b,c”
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "blog_comment", joinColumns = @JoinColumn(name = "blog_id", referencedColumnName = "id"),
