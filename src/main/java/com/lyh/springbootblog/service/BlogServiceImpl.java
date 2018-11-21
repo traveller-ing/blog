@@ -1,6 +1,7 @@
 package com.lyh.springbootblog.service;
 
 import com.lyh.springbootblog.domain.*;
+import com.lyh.springbootblog.domain.es.EsBlog;
 import com.lyh.springbootblog.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,18 +25,35 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     private BlogRepository blogRepository;
 
+    @Autowired
+    private EsBlogService esBlogService;
+
 
     @Transactional
     @Override
     public Blog saveBlog(Blog blog) {
-        return blogRepository.save(blog);
-    }
+        boolean isNew = (blog.getId() == null);
+        EsBlog esBlog = null;
 
+        Blog returnBlog = blogRepository.save(blog);
+
+        if (isNew) {
+            esBlog = new EsBlog(returnBlog);
+        } else {
+            esBlog = esBlogService.getEsBlogByBlogId(blog.getId());
+            esBlog.update(returnBlog);
+        }
+
+        esBlogService.updateEsBlog(esBlog);
+        return returnBlog;
+    }
 
     @Transactional
     @Override
     public void removeBlog(Long id) {
         blogRepository.deleteById(id);
+        EsBlog esblog = esBlogService.getEsBlogByBlogId(id);
+        esBlogService.removeEsBlog(esblog.getId());
     }
 
 

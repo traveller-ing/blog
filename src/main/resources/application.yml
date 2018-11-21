@@ -17,6 +17,15 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     #database-platform: org.hibernate.dialect.MySQLMyISAMDialect
+
+  data:
+    elasticsearch:
+      cluster-nodes: localhost:9300
+      properties:
+        transport:
+          tcp:
+            connect_timeout: 120s
+
 file:
   server:
     url: http://localhost:8081/upload

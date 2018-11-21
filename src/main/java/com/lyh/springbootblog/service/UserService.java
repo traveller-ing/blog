@@ -4,6 +4,9 @@ import com.lyh.springbootblog.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Van
@@ -63,4 +66,11 @@ public interface UserService {
      * @return
      */
     Page<User> listUsersByNameLike(String name, Pageable pageable);
+
+    /**
+     * 根据用户名集合，查询用户详细信息列表
+     * @param usernames
+     * @return
+     */
+    List<User> listUsersByUsernames(Collection<String> usernames);
 }
