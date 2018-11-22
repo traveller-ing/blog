@@ -40,8 +40,8 @@
                             <div class="card-text">
                                 <a href="/u/waylau" th:href="'/u/' + ${blog.username}"
                                    class="card-link" th:text=${blog.username}>waylau</a> 发表于
-                                [[${#dates.format(blog.createTime, 'yyyy-MM-dd HH:mm')}]] <i
-                                    class="fa fa-eye" aria-hidden="true">[[${blog.readSize}]]</i>
+                                [[${#dates.format(blog.createTime, 'yyyy-MM-dd HH:mm')}]]
+                                <i class="fa fa-eye" aria-hidden="true">[[${blog.readSize}]]</i>
                                 <i class="fa fa-heart-o" aria-hidden="true">[[${blog.voteSize}]]</i>
                                 <i class="fa fa-comment-o" aria-hidden="true">[[${blog.commentSize}]]</i>
                             </div>
